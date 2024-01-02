@@ -2,12 +2,9 @@ const asysncHandler = require("express-async-handler");
 const { OtpModel } = require("../model/OtpModel");
 // const twilio = require("twilio");
 const SendEmail = require("../utils/SendEmail");
+const nodemailer = require("nodemailer");
 
 
-// const twilioAccountSid = process.env.twilioAccountSid;
-// const twilioAuthToken = process.env.twilioAuthToken;
-// const twilioClient = twilio(twilioAccountSid, twilioAuthToken);
-// const twilioPhoneNumber = process.env.twilioPhoneNumber;
 
 
 // create controller
@@ -15,33 +12,57 @@ const CreateOtp = asysncHandler(async (req, res) => {
     const { email } = req.body;
 
     try {
+        // Generate a 6-digit OTP
         const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Save OTP to MongoDB
         await OtpModel.create({ email, code: otpCode });
 
-        // Send OTP via Twilio
-        // await twilioClient.messages.create({
-        //     body: `Your Rider App OTP code is: ${otpCode}`,
-        //     to: phone,
-        //     from: "+17038359615",
-        // });
+        // Send OTP via Nodemailer
+        const message = `Your Poolyfi App OTP code is: ${otpCode}. This code is valid for a short period and is used for account verification.`;
 
-        const message = `The Poolyfi App OTP, ${otpCode} or One-Time Password, is an advanced authentication mechanism implemented to bolster the security of user accounts within the Poolyfi application ecosystem. This dynamic system generates a unique, time-sensitive code, delivered exclusively via email, providing an extra layer of verification during the login process.
-        `
-
-        await SendEmail({
+        await sendEmail({
             email: email,
-            subject: `The Poolyfi App OTP`,
-            message
-        })
+            subject: 'Poolyfi App OTP',
+            message,
+        });
 
         res.status(200).json({ success: true, message: 'OTP sent successfully.' });
 
     } catch (error) {
-        res.status(500).send(error)
+        console.error('Error generating and sending OTP:', error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
-})
+});
+
+// Function to send email using Nodemailer
+const sendEmail = async ({ email, subject, message }) => {
+    try {
+        // Create a Nodemailer transporter
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'alizashahzad543@gmail.com', // Replace with your Gmail email
+                pass: 'wqgickllzfuabkhl', // Replace with your Gmail password
+            },
+        });
+
+        // Email content
+        const mailOptions = {
+            from: `"Poolyfi App OTP" alizashahzad543@gmail.com`,
+            to: email,
+            subject: subject,
+            text: message,
+        };
+
+        // Send the email
+        await transporter.sendMail(mailOptions);
+
+    } catch (error) {
+        console.error('Error sending email:', error);
+        throw error; // Rethrow the error for higher-level handling
+    }
+};
 
 
 // verify otp here
