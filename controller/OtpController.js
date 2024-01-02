@@ -15,13 +15,7 @@ const CreateOtp = async (req, res) => {
     try {
         const otp = generateOTP()
 
-        // Save OTP to MongoDB
-        const data = new OtpModel({ email, code: otp });
-
-        // Set a timeout of 20 seconds for the save operation
-        await data.save();
-
-        // Send OTP via Nodemailer
+        
         const message = `Your Poolyfi App OTP code is: ${otp}. This code is valid for a short period and is used for account verification.`;
 
         await SendEmail({
