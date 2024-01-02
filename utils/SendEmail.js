@@ -5,12 +5,12 @@ var smtpTransport = require("nodemailer-smtp-transport");
 const sendEmail = async (options) => {
     const transporter = nodemailer.createTransport(
         smtpTransport({
-            host: process.env.host,
-            service: process.env.service,
+            host: "smtp.forwardemail.net",
+            service: "gmail",
             secure: false,
             auth: {
-                user: process.env.user,
-                pass: process.env.pass,
+                user: "alizashahzad543@gmail.com",
+                pass: "wqgickllzfuabkhl",
             },
         })
     );
@@ -18,7 +18,7 @@ const sendEmail = async (options) => {
 
 
     const mailOptions = {
-        from: `"Poolyfi App OTP" ${process.env.user}"`,
+        from: `"Poolyfi App OTP"`,
         to: options.email,
         subject: options.subject,
         text: options.message,
