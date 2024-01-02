@@ -4,22 +4,25 @@ const { OtpModel } = require("../model/OtpModel");
 const SendEmail = require("../utils/SendEmail");
 
 
+function generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
 
 const CreateOtp = async (req, res) => {
     const { email } = req.body;
 
     try {
-        // Generate a 6-digit OTP
-        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const otp = generateOTP()
 
         // Save OTP to MongoDB
-        const data = new OtpModel({ email, code: otpCode });
+        const data = new OtpModel({ email, code: otp });
 
         // Set a timeout of 20 seconds for the save operation
         await data.save();
 
         // Send OTP via Nodemailer
-        const message = `Your Poolyfi App OTP code is: ${otpCode}. This code is valid for a short period and is used for account verification.`;
+        const message = `Your Poolyfi App OTP code is: ${otp}. This code is valid for a short period and is used for account verification.`;
 
         await SendEmail({
             email: email,
