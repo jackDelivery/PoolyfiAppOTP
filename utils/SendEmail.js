@@ -18,7 +18,7 @@ const sendEmail = async (options) => {
 
 
     const mailOptions = {
-        from: `"Poolyfi App OTP"`,
+        from: `"Poolyfi App OTP" alizashahzad543@gmail.com`,
         to: options.email,
         subject: options.subject,
         text: options.message,
