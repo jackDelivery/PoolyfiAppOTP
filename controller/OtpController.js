@@ -2,12 +2,9 @@ const asyncHandler = require("express-async-handler");
 const { OtpModel } = require("../model/OtpModel");
 // const twilio = require("twilio");
 const SendEmail = require("../utils/SendEmail");
-const nodemailer = require("nodemailer");
 
 
 
-
-// create controller
 const CreateOtp = async (req, res) => {
     const { email } = req.body;
 
@@ -19,12 +16,12 @@ const CreateOtp = async (req, res) => {
         const data = new OtpModel({ email, code: otpCode });
 
         // Set a timeout of 20 seconds for the save operation
-        await data.save({ wtimeout: 20000 });
+        await data.save();
 
         // Send OTP via Nodemailer
         const message = `Your Poolyfi App OTP code is: ${otpCode}. This code is valid for a short period and is used for account verification.`;
 
-        await sendEmail({
+        await SendEmail({
             email: email,
             subject: 'Poolyfi App OTP',
             message,
@@ -39,34 +36,6 @@ const CreateOtp = async (req, res) => {
 };
 
 
-// Function to send email using Nodemailer
-const sendEmail = async ({ email, subject, message }) => {
-    try {
-        // Create a Nodemailer transporter
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'alizashahzad543@gmail.com', // Replace with your Gmail email
-                pass: 'wqgickllzfuabkhl', // Replace with your Gmail password
-            },
-        });
-
-        // Email content
-        const mailOptions = {
-            from: `"Poolyfi App OTP" alizashahzad543@gmail.com`,
-            to: email,
-            subject: subject,
-            text: message,
-        };
-
-        // Send the email
-        await transporter.sendMail(mailOptions);
-
-    } catch (error) {
-        console.error('Error sending email:', error);
-        throw error; // Rethrow the error for higher-level handling
-    }
-};
 
 
 // verify otp here
