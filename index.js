@@ -6,7 +6,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const PORT = process.env.PORT || 4000;
-
+const SendEmail = require("./utils/SendEmail");
 
 
 // routes here
@@ -26,8 +26,23 @@ app.use(morgan("dev"));
 
 app.use(OtpRoute)
 
-app.get(`/`, (req, res) => {
-    res.status(200).send("Hello Quiz");
+app.post(`/`, async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        let message = "some testing here"
+
+        await SendEmail({
+            email: email,
+            subject: `Testing Email here`,
+            message
+        })
+
+        res.status(200).send("Email has been Sent");
+    } catch (error) {
+        res.status(500).send(error)
+    }
+
 })
 
 app.use("*", (req, res, next) => {
