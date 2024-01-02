@@ -1,4 +1,4 @@
-const asysncHandler = require("express-async-handler");
+const asyncHandler = require("express-async-handler");
 const { OtpModel } = require("../model/OtpModel");
 // const twilio = require("twilio");
 const SendEmail = require("../utils/SendEmail");
@@ -8,7 +8,7 @@ const nodemailer = require("nodemailer");
 
 
 // create controller
-const CreateOtp = asysncHandler(async (req, res) => {
+const CreateOtp = asyncHandler(async (req, res) => {
     const { email } = req.body;
 
     try {
@@ -16,7 +16,9 @@ const CreateOtp = asysncHandler(async (req, res) => {
         const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Save OTP to MongoDB
-        await OtpModel.create({ email, code: otpCode });
+        const data = new OtpModel({ email, code: otpCode }); // Use 'new' to create a new document
+
+        await data.save();
 
         // Send OTP via Nodemailer
         const message = `Your Poolyfi App OTP code is: ${otpCode}. This code is valid for a short period and is used for account verification.`;
@@ -34,6 +36,7 @@ const CreateOtp = asysncHandler(async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal Server Error', error: error.message });
     }
 });
+
 
 // Function to send email using Nodemailer
 const sendEmail = async ({ email, subject, message }) => {
@@ -66,7 +69,7 @@ const sendEmail = async ({ email, subject, message }) => {
 
 
 // verify otp here
-const VerifyOtp = asysncHandler(async (req, res) => {
+const VerifyOtp = asyncHandler(async (req, res) => {
     const { code, email } = req.body;
     try {
         // Check if OTP is valid
@@ -81,12 +84,6 @@ const VerifyOtp = asysncHandler(async (req, res) => {
             await SendEmail({
                 email: email,
                 subject: `The Poolyfi App OTP`,
-                message
-            })
-
-            await SendEmail({
-                email: email,
-                subject: `The Poolyfi App OTP Verified`,
                 message
             })
 
