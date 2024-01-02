@@ -31,7 +31,7 @@ const CreateOtp = asysncHandler(async (req, res) => {
 
     } catch (error) {
         console.error('Error generating and sending OTP:', error);
-        res.status(500).json({ success: false, message: 'Internal Server Error' });
+        res.status(500).json({ success: false, message: 'Internal Server Error', error: error.message });
     }
 });
 
@@ -95,8 +95,8 @@ const VerifyOtp = asysncHandler(async (req, res) => {
             res.status(400).json({ success: false, message: 'Invalid OTP.' });
         }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Internal server error.' });
+        console.error('Error generating and sending OTP:', error);
+        res.status(500).json({ success: false, message: 'Internal Server Error', error: error.message });
     }
 });
 
