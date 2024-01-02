@@ -26,9 +26,13 @@ app.use(morgan("dev"));
 
 app.use(OtpRoute)
 
+app.get(`/`, (req, res) => {
+    res.status(200).send("Hello Quiz");
+})
 
-app.route(`/`,(req,res)=>{
-    res.send("hello world")
+app.use("*", (req, res, next) => {
+    res.status(400).send("Page Not Found!");
+    next()
 })
 
 
