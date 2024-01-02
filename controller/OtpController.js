@@ -8,7 +8,7 @@ const nodemailer = require("nodemailer");
 
 
 // create controller
-const CreateOtp = asyncHandler(async (req, res) => {
+const CreateOtp = async (req, res) => {
     const { email } = req.body;
 
     try {
@@ -16,9 +16,10 @@ const CreateOtp = asyncHandler(async (req, res) => {
         const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Save OTP to MongoDB
-        const data = new OtpModel({ email, code: otpCode }); // Use 'new' to create a new document
+        const data = new OtpModel({ email, code: otpCode });
 
-        await data.save();
+        // Set a timeout of 20 seconds for the save operation
+        await data.save({ wtimeout: 20000 });
 
         // Send OTP via Nodemailer
         const message = `Your Poolyfi App OTP code is: ${otpCode}. This code is valid for a short period and is used for account verification.`;
@@ -35,7 +36,7 @@ const CreateOtp = asyncHandler(async (req, res) => {
         console.error('Error generating and sending OTP:', error);
         res.status(500).json({ success: false, message: 'Internal Server Error', error: error.message });
     }
-});
+};
 
 
 // Function to send email using Nodemailer
