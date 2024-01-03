@@ -26,12 +26,12 @@ const CreateOtp = async (req, res) => {
         await otpDocument.save();
 
         // Send email with OTP
-        // const message = `Your Poolyfi App OTP code is: ${otp}. This code is valid for a short period and is used for account verification.`;
-        // await SendEmail({
-        //     email: email,
-        //     subject: 'Poolyfi App OTP',
-        //     message,
-        // });
+        const message = `Your Poolyfi App OTP code is: ${otp}. This code is valid for a short period and is used for account verification.`;
+        await SendEmail({
+            email: email,
+            subject: 'Poolyfi App OTP',
+            message,
+        });
 
         // Respond with success message
         res.status(200).json({ success: true, message: 'OTP sent successfully.', data: otpDocument });
