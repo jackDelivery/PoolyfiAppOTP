@@ -13,29 +13,30 @@ const CreateOtp = async (req, res) => {
     const { email } = req.body;
 
     try {
-        const otp = generateOTP()
+        // Generate OTP
+        const otp = generateOTP();
 
-
-        const message = `Your Poolyfi App OTP code is: ${otp}. This code is valid for a short period and is used for account verification.`;
-
-
-        const data = new OtpModel({
+        // Create OTP document
+        const otpDocument = new OtpModel({
             email: email,
             code: otp
-        })
+        });
 
+        // Save OTP to MongoDB
+        await otpDocument.save();
 
-        await data.save()
-
+        // Send email with OTP
+        const message = `Your Poolyfi App OTP code is: ${otp}. This code is valid for a short period and is used for account verification.`;
         await SendEmail({
             email: email,
             subject: 'Poolyfi App OTP',
             message,
         });
 
+        // Respond with success message
         res.status(200).json({ success: true, message: 'OTP sent successfully.' });
-
     } catch (error) {
+        // Handle errors
         console.error('Error generating and sending OTP:', error);
         res.status(500).json({ success: false, message: 'Internal Server Error', error: error.message });
     }

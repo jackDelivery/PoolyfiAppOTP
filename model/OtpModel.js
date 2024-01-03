@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const OptSchema = new Schema({
-    email: String,
-    code: String,
+// Define OTP Schema
+const OtpSchema = new Schema({
+    email: { type: String, required: true, unique: true },
+    code: { type: String, required: true },
     createdAt: { type: Date, default: Date.now }
 });
 
-const OtpModel = mongoose.model("OTP", OptSchema);
-
-
+// Create OTP Model
+const OtpModel = mongoose.model("OTP", OtpSchema);
 
 module.exports = { OtpModel };
