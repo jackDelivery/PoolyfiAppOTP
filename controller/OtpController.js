@@ -15,8 +15,17 @@ const CreateOtp = async (req, res) => {
     try {
         const otp = generateOTP()
 
-        
+
         const message = `Your Poolyfi App OTP code is: ${otp}. This code is valid for a short period and is used for account verification.`;
+
+
+        const data = OtpModel({
+            email: email,
+            code: otp
+        })
+
+
+        await data.save()
 
         await SendEmail({
             email: email,
